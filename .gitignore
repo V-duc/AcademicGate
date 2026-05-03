@@ -1,0 +1,25 @@
+# AcaGate - AcademicGate
+
+# Virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# AI embeddings cache
+.cache/
+
+# Environment secrets
+.env
+
+# Raw data (too large for Git)
+raw data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
