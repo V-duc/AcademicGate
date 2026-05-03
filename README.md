@@ -1,98 +1,89 @@
-# 🎓 AcademicGate - Academic Jobs Database
+# AcademicGate - AI-Powered Academic Jobs Platform
 
-AcademicGate là một Hệ thống Cơ sở Dữ liệu và Giao diện Web toàn diện được thiết kế để quản lý các tin tuyển dụng học thuật (Academic Jobs), Trường Đại học (Employers), và Hồ sơ Ứng viên (Applicants).
+AcademicGate is a comprehensive Database System and Web Application designed to manage academic job postings, universities (employers), and applicant profiles.
 
-Dự án này được xây dựng với mục tiêu cung cấp một giải pháp quản lý dữ liệu khổng lồ (hơn 40.000 tin tuyển dụng) với hiệu năng cao, bảo mật chặt chẽ thông qua phân quyền (RBAC) và thân thiện với người dùng cuối.
-
----
-
-## 🌟 Tính năng Nổi bật (Features)
-
-1. **Giao diện Web tương tác (Streamlit):**
-   - **Dashboard (`app.py`):** Hiển thị các chỉ số thống kê (KPIs), biểu đồ xu hướng đăng việc làm và phễu ứng tuyển.
-   - **Quản lý Trường học (Employers):** Xem, tìm kiếm và thêm mới thông tin các Trường Đại học.
-   - **Quản lý Việc làm (Jobs):** Danh sách hàng chục nghìn vị trí (PhD, Postdoc, Lecturer...). Hỗ trợ Nhà tuyển dụng đăng tin mới.
-   - **Quản lý Ứng viên (Applicants):** Danh sách chi tiết thông tin ứng viên (Tuổi, Giới tính, Chuyên ngành...).
-   - **Theo dõi Hồ sơ (Applications):** Nhà tuyển dụng dễ dàng thay đổi trạng thái đơn nộp (Pending, Accepted, Rejected).
-
-2. **Giả lập Phân quyền (Role-Based Access Control):**
-   - **Admin:** Toàn quyền hệ thống.
-   - **Employer:** Chỉ được đăng tin và duyệt đơn. Bị chặn xem thông tin nội bộ của hệ thống.
-   - **Applicant:** Chỉ được tìm việc và nộp đơn. Giao diện đăng tin tự động bị ẩn.
-
-3. **Gợi ý việc làm Thông minh (Smart Suggest):**
-   - Hệ thống đối chiếu Chuyên ngành (`Major`) và Công việc mong muốn (`Wanted_Job`) của ứng viên với hàng ngàn tin tuyển dụng. Sử dụng thuật toán trích xuất từ khóa (Keyword Extraction) của Python để tính điểm và đưa ra Top 10 gợi ý phù hợp nhất cực kỳ nhanh chóng.
-
-4. **Kiến trúc Cơ sở dữ liệu Cứng cáp (MySQL):**
-   - Xử lý Business Logic ngay tại Database thông qua **Stored Procedures** và **Triggers**.
-   - Tối ưu hóa **Indexing** giúp tăng tốc độ JOIN, Lọc và Sắp xếp trên khối lượng dữ liệu khổng lồ mà không gây trễ web.
+This project is built to handle a massive dataset (over 40,000 job postings) with high performance, strict role-based access control (RBAC), and an AI-driven semantic recommendation engine.
 
 ---
 
-## 🛠 Công nghệ sử dụng (Tech Stack)
+## 🌟 Core Features
+
+1. **Interactive Web Dashboard (Streamlit):**
+   - **Dashboard (`app.py`):** Displays statistics, KPIs, trend charts for job postings, and application funnel metrics.
+   - **Employers Management:** View, search, and add new universities. Uses server-side pagination for optimal performance.
+   - **Jobs Management:** Browse tens of thousands of academic positions. Employers can post new jobs. Includes toggles for active/closed jobs and dynamic pagination.
+   - **Applicants Management:** View applicant details (Age, Nationality, Major, etc.). Restricted to Admins and Employers.
+   - **Applications Tracking:** Track and update application statuses (Pending, Accepted, Rejected).
+
+2. **Role-Based Access Control (RBAC):**
+   - **Admin:** Full system access.
+   - **Employer:** Can post jobs, view applicants, and update application statuses. Restricted from candidate tools.
+   - **Applicant:** Can apply for jobs and use the AI Smart Suggest tool. Cannot view other applicants or employer-specific tools.
+
+3. **AI Smart Suggest (Semantic Search):**
+   - Integrates `sentence-transformers` (`all-MiniLM-L6-v2`) to perform semantic matching.
+   - Replaces traditional keyword search (e.g., matching "AI" to "Artificial Intelligence").
+   - Utilizes `.npz` caching to ensure sub-second recommendation response times even with 40,000+ jobs.
+
+4. **Robust Database Architecture (MySQL):**
+   - Business logic runs at the database layer via **Stored Procedures** and **Triggers**.
+   - Highly optimized **Indexing** structure ensures fast JOINs, filtering, and sorting without degrading web performance.
+   - Uses `LOAD DATA LOCAL INFILE` for lightning-fast initial data seeding.
+
+---
+
+## 🛠 Tech Stack
 - **Database:** MySQL 8.0+
 - **Backend/Frontend:** Python 3.10+, Streamlit
-- **Data Processing:** Pandas
-- **Fake Data Generator:** Faker
+- **Data Processing & AI:** Pandas, `sentence-transformers`, NumPy
 
 ---
 
-## 🚀 Hướng dẫn Cài đặt & Chạy dự án (Setup & Run)
+## 🚀 Setup & Installation
 
-### 1. Cài đặt thư viện
-Mở Terminal tại thư mục dự án và chạy:
+### 1. Install Dependencies
+Open a Terminal in the project directory and run:
 ```bash
 pip install -r requirements.txt
-pip install faker
 ```
+*(Note: To enable fast MySQL data loading, ensure the database user has `local_infile=1` privileges).*
 
-### 2. Thiết lập Cơ sở dữ liệu (MySQL)
-1. Mở MySQL Workbench.
-2. Chạy lần lượt các file SQL trong thư mục `schema/` theo đúng thứ tự từ `01` đến `04` để tạo Bảng, Hàm, Index và Phân quyền.
-3. Mở file `config.py` và sửa thông tin `DB_CONFIG` (user, password) cho khớp với máy tính của bạn.
+### 2. Configure Database
+1. Create a MySQL database and run the SQL scripts in the `schema/` folder sequentially (`01_schema.sql` to `04_security.sql`).
+2. Provide your database password to the system by either modifying `config.py` or setting an OS Environment Variable `DB_PASSWORD`.
 
-### 3. Nạp dữ liệu vào Database
-Chạy file import để tự động làm sạch và đẩy dữ liệu từ các file CSV vào MySQL:
+### 3. High-Speed Data Import
+Run the fast import script to ingest data from the CSV files into MySQL. This script uses `LOAD DATA LOCAL INFILE` to process tens of thousands of rows in seconds:
 ```bash
-python import_data.py --truncate
+python fast_import.py
 ```
 
-### 4. Sinh dữ liệu Ứng viên ảo
-Tạo hàng loạt hồ sơ ứng viên bằng AI Faker để thử nghiệm:
-```bash
-python generate_applicants.py
-```
-
-### 5. Khởi chạy Giao diện Web
-Khởi động hệ thống Web bằng lệnh:
+### 4. Run the Web Interface
+Start the Streamlit application:
 ```bash
 streamlit run app.py
 ```
-*(Trình duyệt sẽ tự động mở lên tại địa chỉ http://localhost:8501)*
 
 ---
 
-## 📂 Cấu trúc thư mục (Folder Structure)
+## 📁 Folder Structure
 ```text
 AcaGate/
 │
-├── app.py                      # Trang chủ Dashboard Streamlit
-├── auth.py                     # Module giả lập phân quyền Sidebar
-├── database.py                 # Tầng giao tiếp (CRUD) kết nối Python và MySQL
-├── config.py                   # Cấu hình DB và đường dẫn file import
-├── import_data.py              # Script nạp dữ liệu từ CSV vào MySQL
-├── csv_utils.py                # Hàm xử lý lỗi Pandas khi đọc file
-├── generate_applicants.py      # Script tự động thêm cột và sinh ứng viên ảo
-├── clean_applicants.py         # Script dọn dẹp dữ liệu cũ bị lỗi
+├── app.py                      # Main Streamlit Dashboard entry point
+├── auth.py                     # Authentication and RBAC Sidebar module
+├── database.py                 # Core CRUD layer connecting Python and MySQL
+├── config.py                   # Database configuration
+├── fast_import.py              # High-speed data ingestion script
+├── smart_suggest.py            # AI Semantic Recommendation Engine
 │
-├── pages/                      # Các trang menu của Streamlit
-│   ├── 1_🏢_Employers.py
-│   ├── 2_📋_Jobs.py
-│   ├── 3_👤_Applicants.py
-│   └── 4_📨_Applications.py
+├── pages/                      # Streamlit application pages
+│   ├── 1_Employers.py          # Employer and university management
+│   ├── 2_Jobs.py               # Job board and application portal
+│   ├── 3_Applicants.py         # Candidate tracking system
+│   └── 4_Applications.py       # Application status workflow
 │
-├── raw data/                   # Thư mục chứa các file CSV gốc
-└── schema/                     # Mã nguồn CSDL MySQL (Bảng, Hàm, Index, Bảo mật)
+├── raw data/                   # Original CSV data sets for initial seeding
+├── schema/                     # MySQL DDL (Tables, Views, Procedures, Security)
+└── .cache/                     # Generated AI embeddings (auto-created)
 ```
-
-**Chúc bạn đạt điểm A+ với đồ án này! 🎓**
